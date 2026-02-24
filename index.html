@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucida Clinical Trials — Active Enrolling Studies</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Crimson+Pro:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1b2a;
+  --card: #162840;
+  --card2: #152336;
+  --ink: #f0f4f8;
+  --muted: #7a9ab0;
+  --border: rgba(14,184,160,0.2);
+  --teal: #0eb8a0;
+  --teal-dim: #0a8a78;
+  --gold: #f5c842;
+  --red: #ff6b6b;
+  --shadow: rgba(0,0,0,0.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Crimson Pro', Georgia, serif;
+  min-height: 100vh;
+  padding-bottom: 5rem;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(14,184,160,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14,184,160,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 2rem; }
+
+/* MASTHEAD */
+.masthead {
+  padding: 3rem 2rem 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.masthead-rule {
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--gold), var(--teal));
+  margin-bottom: 1.5rem;
+  border-radius: 2px;
+}
+
+.masthead-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.site-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.site-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.site-title em { font-style: italic; color: var(--teal); }
+
+.masthead-right { text-align: right; padding-top: 0.25rem; }
+
+.issue-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+
+.issue-date {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+
+.masthead-sub {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+  font-style: italic;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+  line-height: 1.5;
+}
+
+.masthead-bottom-rule {
+  height: 1px;
+  background: var(--border);
+  margin-top: 1.5rem;
+}
+
+/* SUMMARY STRIP */
+.summary-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 2rem 0;
+  background: var(--card);
+}
+
+.summary-item {
+  padding: 1.1rem 1.5rem;
+  border-right: 1px solid var(--border);
+  animation: fadeUp 0.5s ease both;
+}
+.summary-item:last-child { border-right: none; }
+
+.summary-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.summary-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem;
+  color: var(--teal);
+  line-height: 1;
+}
+
+.summary-sub {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+  font-style: italic;
+}
+
+/* SECTION HEADER */
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2.5rem 0 1.25rem;
+}
+
+.section-head-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.section-head-rule { flex: 1; height: 1px; background: var(--border); }
+
+/* TRIAL CARDS */
+.trials-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.trial-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px var(--shadow);
+  animation: fadeUp 0.5s ease both;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.trial-card:hover { box-shadow: 0 4px 24px var(--shadow); border-color: rgba(14,184,160,0.4); }
+
+.trial-card-top {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 1rem;
+  padding: 1.4rem 1.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.trial-sponsor {
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.trial-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.trial-indication {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+  font-style: italic;
+}
+
+.trial-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(14,184,160,0.1);
+  color: var(--teal);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: 2px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.trial-badge-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--teal);
+  animation: pulse 2s infinite;
+}
+
+.trial-card-body {
+  padding: 1rem 1.6rem 1.2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media(max-width: 600px) {
+  .trial-card-body { grid-template-columns: 1fr; }
+  .trial-card-top { grid-template-columns: 1fr; }
+}
+
+.criteria-heading {
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.criteria-heading::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.criteria-tag {
+  display: inline-block;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 2px;
+  margin: 0.15rem 0.15rem 0.15rem 0;
+  line-height: 1.4;
+}
+
+.criteria-tag.exclude {
+  background: rgba(255,255,255,0.04);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.trial-card-footer {
+  padding: 0.85rem 1.6rem;
+  background: rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+}
+
+.refer-btn {
+  background: var(--teal);
+  color: var(--bg);
+  border: none;
+  padding: 0.55rem 1.4rem;
+  font-family: 'Crimson Pro', serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.2s, transform 0.1s;
+}
+.refer-btn:hover { background: #0a9e88; transform: translateY(-1px); }
+
+/* NOT SURE CALLOUT */
+.not-sure-box {
+  margin-top: 1.25rem;
+  padding: 1.2rem 1.6rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.not-sure-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.not-sure-text {
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* CONTACT FOOTER */
+.contact-footer {
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.contact-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.contact-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+
+.contact-detail { font-size: 0.85rem; color: var(--muted); font-style: italic; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--card2);
+  border: 1px solid var(--teal);
+  border-radius: 6px;
+  padding: 2rem;
+  max-width: 460px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  transform: translateY(16px);
+  transition: transform 0.25s;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+
+.modal-eyebrow {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 0.4rem;
+}
+
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+
+.modal-sub {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  font-style: italic;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.form-group { margin-bottom: 1rem; }
+
+.form-label {
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.6rem 0.85rem;
+  color: var(--ink);
+  font-family: 'Crimson Pro', serif;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+.form-textarea { resize: vertical; min-height: 75px; }
+.form-select option { background: var(--bg); }
+
+.modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+
+.btn-submit {
+  flex: 1;
+  padding: 0.7rem;
+  background: var(--teal);
+  color: var(--bg);
+  border: none;
+  border-radius: 3px;
+  font-family: 'Crimson Pro', serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-submit:hover { opacity: 0.85; }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-cancel {
+  padding: 0.7rem 1.2rem;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: 'Crimson Pro', serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--teal);
+  color: var(--bg);
+  padding: 0.85rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: 'Crimson Pro', serif;
+  font-weight: 500;
+  z-index: 300;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: transform 0.3s, opacity 0.3s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.trial-card:nth-child(1) { animation-delay: 0.05s; }
+.trial-card:nth-child(2) { animation-delay: 0.10s; }
+.trial-card:nth-child(3) { animation-delay: 0.15s; }
+.trial-card:nth-child(4) { animation-delay: 0.20s; }
+.trial-card:nth-child(5) { animation-delay: 0.25s; }
+.summary-item:nth-child(1) { animation-delay: 0.00s; }
+.summary-item:nth-child(2) { animation-delay: 0.06s; }
+.summary-item:nth-child(3) { animation-delay: 0.12s; }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-rule"></div>
+  <div class="masthead-inner">
+    <div>
+      <p class="site-label">Lucida Clinical Trials · Internal Bulletin</p>
+      <h1 class="site-title">Currently <em>Enrolling</em><br>Studies</h1>
+    </div>
+    <div class="masthead-right">
+      <p class="issue-label">Monthly Update</p>
+      <p class="issue-date" id="issue-date"></p>
+    </div>
+  </div>
+  <p class="masthead-sub">
+    Principal Investigator: <strong>Dr. Jason Reich, MD</strong> &nbsp;·&nbsp;
+    For questions or to refer a patient, use the buttons below or contact Kevin LeBlanc at Lucida Clinical Trials.
+  </p>
+  <div class="masthead-bottom-rule"></div>
+</div>
+
+<div class="page">
+
+  <!-- SUMMARY STRIP -->
+  <div class="summary-strip">
+    <div class="summary-item">
+      <p class="summary-label">Active Trials</p>
+      <p class="summary-value">5</p>
+      <p class="summary-sub">enrolling now</p>
+    </div>
+    <div class="summary-item">
+      <p class="summary-label">Indications</p>
+      <p class="summary-value">3</p>
+      <p class="summary-sub">CD · UC · NASH</p>
+    </div>
+    <div class="summary-item">
+      <p class="summary-label">Currently Enrolled</p>
+      <p class="summary-value" id="total-enrolled">3</p>
+      <p class="summary-sub">across all trials</p>
+    </div>
+  </div>
+
+  <!-- TRIALS -->
+  <div class="section-head">
+    <span class="section-head-label">Active Enrolling Studies</span>
+    <div class="section-head-rule"></div>
+  </div>
+
+  <div class="trials-list" id="trials-list"></div>
+
+  <!-- NOT SURE CALLOUT -->
+  <div class="not-sure-box">
+    <div>
+      <p class="not-sure-label">Not Sure Which Trial Fits Your Patient?</p>
+      <p class="not-sure-text">No problem — just send us the patient's info and we'll review their history and let you know if they qualify for any of our active studies.</p>
+    </div>
+    <button class="refer-btn" onclick="openModal('Not sure', 'Any Trial')">Refer Anyway →</button>
+  </div>
+
+  <!-- CONTACT FOOTER -->
+  <div class="contact-footer">
+    <div>
+      <p class="contact-label">Trial Coordinator</p>
+      <p class="contact-name">Kevin LeBlanc</p>
+      <p class="contact-detail">Lucida Clinical Trials</p>
+    </div>
+    <div>
+      <p class="contact-label">To Refer a Patient</p>
+      <p class="contact-detail">Click "Refer a Patient" on any trial above,<br>or use the "Refer Anyway" button if unsure.</p>
+    </div>
+    <div>
+      <p class="contact-label">Principal Investigator</p>
+      <p class="contact-name">Dr. Jason Reich, MD</p>
+      <p class="contact-detail">Gastroenterology · IBD</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <p class="modal-eyebrow">Patient Referral</p>
+    <p class="modal-title">Refer a Patient</p>
+    <p class="modal-sub">Not sure which trial fits? Select "Not sure" below — we'll figure out the right fit for you.</p>
+    <div class="form-group">
+      <label class="form-label">Patient Name</label>
+      <input class="form-input" id="field-name" placeholder="First and last name" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Patient Phone Number</label>
+      <input class="form-input" id="field-phone" placeholder="(555) 555-5555" type="tel" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Trial</label>
+      <select class="form-select" id="field-trial"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Your Name</label>
+      <input class="form-input" id="field-doc" placeholder="Dr. ..." />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Clinical Notes (optional)</label>
+      <textarea class="form-textarea" id="field-notes" placeholder="Relevant history, current meds, prior biologics..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-submit" id="submit-btn" onclick="submitReferral()">Submit Referral</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const trials = [
+  {
+    sponsor: "Eli Lilly",
+    name: "MALO",
+    indication: "NASH / Metabolic Liver Disease",
+    drug: "Tirzepatide / Retatutide",
+    phase: "Phase 3",
+    enrolled: 0,
+    include: ["NASH/MASH with fibrosis confirmed", "Metabolic syndrome components (T2DM, obesity, HTN, HLD)", "BMI and FibroScan criteria — contact Kevin for specifics"],
+    exclude: ["Cirrhosis or decompensated liver disease", "Unstable T2DM or T1DM", "Poorly controlled hypertension (SBP > 160)"],
+    route: "SQ"
+  },
+  {
+    sponsor: "AbbVie",
+    name: "M24-885",
+    indication: "Moderate-to-Severe Crohn's Disease",
+    drug: "Risankizumab / Lutikizumab / ABBV-3882 (IL-inhibitors)",
+    phase: "Phase 2a",
+    enrolled: 2,
+    include: ["CD diagnosis > 3 months", "Failed or intolerant to advanced therapy", "CDAI >= 220"],
+    exclude: ["Current abscess, symptomatic stricture, or ostomy", "> 2 resected segments", "Malignancy < 5 years"],
+    route: "IV / SQ"
+  },
+  {
+    sponsor: "Abivax",
+    name: "Abx464-202",
+    indication: "Moderate-to-Severe Crohn's Disease",
+    drug: "Obifazimod (small molecule / miR-124) — No placebo",
+    phase: "Phase 2b",
+    enrolled: 1,
+    include: ["Failed or intolerant to advanced therapy", "Corticosteroid resistance or intolerance", "CDAI >= 220"],
+    exclude: ["Symptomatic stricture not passable on endoscopy", "CD without ileal and/or colonic involvement", "Active malignancy within 5 years"],
+    route: "PO (oral)"
+  },
+  {
+    sponsor: "AbbVie",
+    name: "M24-540",
+    indication: "Ulcerative Colitis",
+    drug: "Risankizumab",
+    phase: "Phase 2-3",
+    enrolled: 0,
+    include: ["Moderate-to-severe UC", "Failed conventional or advanced therapy", "Appropriate Mayo score at screening"],
+    exclude: ["Current abscess or symptomatic stricture", "Recent major GI surgery", "Active malignancy"],
+    route: "IV / SQ"
+  },
+  {
+    sponsor: "Takeda",
+    name: "Panorama",
+    indication: "Ulcerative Colitis or Crohn's Disease",
+    drug: "Vedolizumab Subcutaneous (gut-selective anti-integrin)",
+    phase: "Phase 4",
+    enrolled: 0,
+    include: ["UC: complete Mayo Score 6-12, endoscopy subscore 2-3", "CD: CDAI 220-450, SES-CD >= 6", "Failed corticosteroids, immunomodulators, TNF inhibitors, anti-IL12/23, JAK inhibitors, or S1P"],
+    exclude: ["Failed more than 2 advanced therapies", "Ileostomy, colostomy, or short bowel syndrome", "Major surgery requiring general anesthesia within 3 months"],
+    route: "SQ"
+  }
+];
+
+// Set date
+document.getElementById('issue-date').textContent =
+  new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+
+// Render trials
+const list = document.getElementById('trials-list');
+trials.forEach(function(t) {
+  var includeHTML = t.include.map(function(i) {
+    return '<span class="criteria-tag">' + i + '</span>';
+  }).join('');
+  var excludeHTML = t.exclude.map(function(e) {
+    return '<span class="criteria-tag exclude">' + e + '</span>';
+  }).join('');
+
+  var enrolledBadge = t.enrolled > 0
+    ? '<p style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem;text-align:center">' + t.enrolled + ' enrolled</p>'
+    : '';
+
+  list.innerHTML += '<div class="trial-card">' +
+    '<div class="trial-card-top">' +
+      '<div>' +
+        '<p class="trial-sponsor">' + t.sponsor + ' · ' + t.phase + ' · ' + t.route + '</p>' +
+        '<p class="trial-name">' + t.name + '</p>' +
+        '<p class="trial-indication">' + t.indication + ' — ' + t.drug + '</p>' +
+      '</div>' +
+      '<div>' +
+        '<div class="trial-badge"><span class="trial-badge-dot"></span>Enrolling</div>' +
+        enrolledBadge +
+      '</div>' +
+    '</div>' +
+    '<div class="trial-card-body">' +
+      '<div>' +
+        '<p class="criteria-heading">Inclusion</p>' +
+        '<div>' + includeHTML + '</div>' +
+      '</div>' +
+      '<div>' +
+        '<p class="criteria-heading">Exclusion</p>' +
+        '<div>' + excludeHTML + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="trial-card-footer">' +
+      '<button class="refer-btn" onclick="openModal(\'' + t.name + '\', \'' + t.sponsor + '\')">Refer a Patient →</button>' +
+    '</div>' +
+  '</div>';
+});
+
+// Populate trial select
+var trialSel = document.getElementById('field-trial');
+var notSureOpt = document.createElement('option');
+notSureOpt.value = 'Not sure - please help determine';
+notSureOpt.textContent = 'Not sure - please help determine the right fit';
+trialSel.appendChild(notSureOpt);
+
+trials.forEach(function(t) {
+  var opt = document.createElement('option');
+  opt.value = t.name;
+  opt.textContent = t.sponsor + ' - ' + t.name + ' (' + t.indication + ')';
+  trialSel.appendChild(opt);
+});
+
+function openModal(name, sponsor) {
+  if (name) {
+    document.getElementById('field-trial').value = name;
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function submitReferral() {
+  var name = document.getElementById('field-name').value.trim();
+  var phone = document.getElementById('field-phone').value.trim();
+  var doc = document.getElementById('field-doc').value.trim();
+  var trial = document.getElementById('field-trial').value;
+  var notes = document.getElementById('field-notes').value.trim();
+
+  if (!name) { alert('Please enter the patient name.'); return; }
+  if (!phone) { alert('Please enter the patient phone number.'); return; }
+
+  var btn = document.getElementById('submit-btn');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  fetch('https://formspree.io/f/xdalwvae', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      'Patient Name': name,
+      'Patient Phone': phone,
+      'Trial': trial,
+      'Referring Physician': doc || 'Not specified',
+      'Clinical Notes': notes || 'None'
+    })
+  })
+  .then(function(res) {
+    if (res.ok) {
+      closeModal();
+      showToast('Referral sent — ' + name + ' to ' + trial);
+      document.getElementById('field-name').value = '';
+      document.getElementById('field-phone').value = '';
+      document.getElementById('field-doc').value = '';
+      document.getElementById('field-notes').value = '';
+    } else {
+      alert('Something went wrong. Please try again or contact Kevin directly.');
+    }
+  })
+  .catch(function() {
+    alert('Network error. Please try again.');
+  })
+  .finally(function() {
+    btn.textContent = 'Submit Referral';
+    btn.disabled = false;
+  });
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 4000);
+}
+</script>
+</body>
+</html>
